@@ -1,3 +1,3 @@
-# threads_secemp1
+# GPT_Instruct
 
-Make issues and solve 'em or something I guess we got us some good markdown ;)
+Repo for a smol GPT model with instruct training and dynamic sampling (mostly maybe probably almost definitely)
