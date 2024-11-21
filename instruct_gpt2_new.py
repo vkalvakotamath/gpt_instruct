@@ -9,7 +9,7 @@ from transformers import PreTrainedTokenizerBase
 from typing import Dict, List, Optional
 
 from datasets import load_dataset
-
+import torch
 
 class InstructGPT:
     def __init__(
@@ -69,8 +69,8 @@ class InstructGPT:
         self,
         output_dir: str = './instruct-gpt2-model',
         learning_rate: float = 5e-5,
-        batch_size: int = 5,
-        num_train_epochs: int = 5, # not really sure about this stuff yet, may want to tweak this later
+        batch_size: int = 8,
+        num_train_epochs: int = 1, # not really sure about this stuff yet, may want to tweak this later
     ):
         
         weight_decay=0.01
@@ -129,7 +129,10 @@ class InstructGPT:
         Returns:
             Generated text
         """
-        input_ids = self.tokenizer.encode(prompt, return_tensors='pt')
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model.to(device)
+
+        input_ids = self.tokenizer.encode(prompt, return_tensors='pt').to(device)
 
         output = self.model.generate(
             input_ids,
@@ -143,12 +146,14 @@ class InstructGPT:
 
         return self.tokenizer.decode(output[0], skip_special_tokens=True)
 
+
+
 def main():
     instruct_trainer = InstructGPT()
     instruct_trainer.train(
         output_dir='./instruct-gpt2-model',
         learning_rate=5e-5,
-        batch_size=5,
+        batch_size=8,
         num_train_epochs=5
     )
 
